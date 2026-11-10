@@ -13,6 +13,7 @@ import '../../resource_settings.dart';
 import '../../resource_settings_editor.dart';
 import '../app_scope.dart';
 import '../player/danmaku_settings.dart';
+import '../terms_page.dart';
 import '../update_prompt.dart';
 import '../users/users_view.dart';
 import '../widgets/focus_ring.dart';
@@ -457,6 +458,15 @@ class SettingsSection extends StatelessWidget {
                   ),
             ],
           ),
+      SettingsCard(
+        children: [
+          SettingsTile(
+            title: '使用条款',
+            subtitle: '开源声明、免责声明与内容来源说明',
+            onTap: () => open('使用条款', (_) => const TermsPage()),
+          ),
+        ],
+      ),
     ];
   }
 
