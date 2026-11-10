@@ -16,7 +16,7 @@ class BuildVariant:
     @property
     def bundle_identifier(self):
         if not self.all_sources:
-            return 'com.guoapp.phoenix'
+            return 'com.hongguoguo.android'
         return os.environ.get('ZHENGUOJIAN_PACKAGE_NAME', '').strip() or 'com.guoapp.all'
 
     @property

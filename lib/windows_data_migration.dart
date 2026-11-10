@@ -7,22 +7,34 @@ import 'diary_service.dart';
 
 const legacyDataFolder = '真果鉴';
 
+// 旧版本的数据目录名就是包名，包名改过一次，启动时把旧目录整个搬过来。
+const legacyPackageFolders = ['com.guoapp.phoenix'];
+
 Future<void> migrateWindowsData() async {
   final target = await getApplicationSupportDirectory();
-  final legacyParent = Directory(
-    path.join(target.parent.path, legacyDataFolder),
-  );
-  final legacy = Directory(path.join(legacyParent.path, legacyDataFolder));
-  try {
-    if (!await moveLegacyData(legacy, target)) return;
-    DiaryService.add('[App] 已迁移旧数据目录: ${legacy.path} -> ${target.path}');
-  } catch (failure) {
-    DiaryService.add('[App] 旧数据目录迁移失败: $failure');
+  final parent = target.parent;
+  final sources = [
+    for (final folder in legacyPackageFolders)
+      Directory(path.join(parent.path, folder)),
+    Directory(path.join(parent.path, legacyDataFolder, legacyDataFolder)),
+  ];
+  for (final legacy in sources) {
+    try {
+      if (!await moveLegacyData(legacy, target)) continue;
+      DiaryService.add('[App] 已迁移旧数据目录: ${legacy.path} -> ${target.path}');
+    } catch (failure) {
+      DiaryService.add('[App] 旧数据目录迁移失败: $failure');
+      return;
+    }
+    // 真果鉴时期的旧目录多套了一层同名父目录，搬完顺手删掉。
+    if (path.basename(legacy.path) == legacyDataFolder &&
+        path.basename(legacy.parent.path) == legacyDataFolder) {
+      try {
+        await legacy.parent.delete();
+      } catch (_) {}
+    }
     return;
   }
-  try {
-    await legacyParent.delete();
-  } catch (_) {}
 }
 
 Future<bool> moveLegacyData(Directory legacy, Directory target) async {

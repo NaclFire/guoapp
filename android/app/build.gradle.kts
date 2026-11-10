@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = if (allSources) allSourcesPackageName else "com.guoapp.phoenix"
+        applicationId = if (allSources) allSourcesPackageName else "com.hongguoguo.android"
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

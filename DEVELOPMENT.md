@@ -103,7 +103,7 @@ Go RE2 正则**不支持 lookahead**。解析多线路播放列表时不能用 `
 
 Android 签名只用仓库 Secrets，两个版本各用一套：红果鉴为 `ANDROID_KEYSTORE_BASE64`、`ANDROID_KEYSTORE_PASSWORD`、`ANDROID_KEY_ALIAS`、`ANDROID_KEY_PASSWORD`，另需仓库变量 `ANDROID_CERT_SHA256`；全站源版把前缀 `ANDROID_` 换成 `ZHENGUOJIAN_`，证书变量为 `ZHENGUOJIAN_CERT_SHA256`（证书 SHA-256，冒号和大小写不限）。工作流按矩阵的 `signing` 前缀选取，缺任意一项都会失败。CI 通过环境变量把签名传给 Gradle；本机红果鉴读 `android/key.properties`，全站源版读 `android/key-all-sources.properties`（均不入库）。
 
-全站源版的包名和显示名取环境变量（CI 取同名仓库变量），没设或为空时用默认值；红果鉴固定为 `com.guoapp.phoenix`、`红果鉴`、`HongGuoJian`：
+全站源版的包名和显示名取环境变量（CI 取同名仓库变量），没设或为空时用默认值；红果鉴固定为 `com.hongguoguo.android`、`红果鉴`、`HongGuoJian`：
 
 | 变量 | 默认值 | 读取位置 |
 | --- | --- | --- |
@@ -111,7 +111,7 @@ Android 签名只用仓库 Secrets，两个版本各用一套：红果鉴为 `AN
 | `ZHENGUOJIAN_DISPLAY_NAME` | `真果鉴` | 由 `scripts/app_build.py` 作为 `--dart-define` 传入，Dart `appName`、Android `build.gradle.kts`、iOS「Thin Binary」构建阶段读取；Windows `app_branding.cmake` 直接读环境变量；macOS 由 `package_release.py` 写入 |
 | `ZHENGUOJIAN_LATIN_NAME` | `ZhenGuoJian` | iOS「Thin Binary」构建阶段，作为英文 `CFBundleDisplayName` |
 
-Windows 数据目录为 `%APPDATA%\<包名>`：`Runner.rc` 不设 CompanyName，ProductName 为包名，`path_provider` 据此拼出应用支持目录，两个版本数据互不共用。旧版数据在 `%APPDATA%\真果鉴\真果鉴`，`lib/windows_data_migration.dart` 在启动最早阶段检查：新目录为空且旧目录存在时整个改名移入，先启动的版本拿到旧数据；新目录已有内容或移动失败都不处理，失败写入日志。Android TV 横幅 `tv_banner_all_sources.png` 只有图标不带文字，改名不用重新生成。
+Windows 数据目录为 `%APPDATA%\<包名>`：`Runner.rc` 不设 CompanyName，ProductName 为包名，`path_provider` 据此拼出应用支持目录，两个版本数据互不共用。旧版数据依次在 `%APPDATA%\com.guoapp.phoenix` 和 `%APPDATA%\真果鉴\真果鉴`，`lib/windows_data_migration.dart` 在启动最早阶段检查：新目录为空且旧目录存在时整个改名移入，先启动的版本拿到旧数据；新目录已有内容或移动失败都不处理，失败写入日志。Android TV 横幅 `tv_banner_all_sources.png` 只有图标不带文字，改名不用重新生成。
 
 关于页的重建版 GitHub、Telegram 交流群组和更新频道链接分别取环境变量 `PROJECT_URL`、`TELEGRAM_GROUP_URL`、`TELEGRAM_CHANNEL_URL`（CI 取同名仓库变量），由 `scripts/app_build.py` 作为 `--dart-define` 传给 Flutter；没设的链接在关于页不显示，直接 `flutter run` 时需自行加 `--dart-define`。`PROJECT_URL` 同时注入 Go 的 `nativeProjectURL`，检查更新只接受 `{PROJECT_URL}/releases/` 开头的发布页，没设时不提示更新。
 
